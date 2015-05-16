@@ -7,7 +7,7 @@ build_dir=${build_dir:-/tmp/opencv_build."$(date +%Y%m%d%H%M%S)".$$}
 mkdir -p "$build_dir"
 cd "$build_dir" || exit 1
 
-git clone -b 2.4 https://github.com/Itseez/opencv.git opencv
+git clone -b "$branch" https://github.com/Itseez/opencv.git opencv
 (cd opencv && git pull)
 
 rm -rf release
