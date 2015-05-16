@@ -4,6 +4,8 @@ install_prefix=${install_prefix:-/opt/opencv}
 branch=${branch:-2.4}
 build_dir=${build_dir:-/tmp/opencv_build."$(date +%Y%m%d%H%M%S)".$$}
 source_dir="${source_dir:-$build_dir/opencv-$branch}"
+cpu_count=$(egrep -c '^processor\s*:' /proc/cpuinfo)
+cpu_count=$((1<$cpu_count?$cpu_count:1))
 
 packages=(git cmake gcc-c++ libjpeg-turbo-devel libpng-devel libtiff-devel openmpi-devel tbb-devel)
 if ! rpm -q "${packages[@]}" >/dev/null 2>&1; then
@@ -24,4 +26,4 @@ cmake \
   -D WITH_TBB=ON \
   $source_dir
 
-make && make && make install
+make -j $cpu_count && make install
