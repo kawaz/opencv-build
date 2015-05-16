@@ -6,6 +6,10 @@ build_dir=${build_dir:-/tmp/opencv_build."$(date +%Y%m%d%H%M%S)".$$}
 
 mkdir -p "$build_dir"
 cd "$build_dir" || exit 1
+packages=(git cmake gcc-c++ libjpeg-turbo-devel libpng-devel libtiff-devel openmpi-devel tbb-devel)
+if ! rpm -q "${packages[@]}" >/dev/null 2>&1; then
+  sudo yum -y install "${packages[@]}"
+fi
 
 git clone -b "$branch" https://github.com/Itseez/opencv.git opencv
 (cd opencv && git pull)
@@ -14,7 +18,6 @@ rm -rf release
 mkdir -p release
 cd release
 
-sudo yum -y install cmake gcc-c++ libjpeg-turbo-devel libpng-devel libtiff-devel openmpi-devel tbb-devel
 cmake \
   -D BUILD_EXAMPLES=ON \
   -D CMAKE_BUILD_TYPE=RELEASE \
