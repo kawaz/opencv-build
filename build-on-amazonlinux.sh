@@ -26,4 +26,9 @@ cmake \
   -D WITH_TBB=ON \
   $source_dir
 
-make -j $cpu_count && make install
+make -j $cpu_count || exit 1
+if [[ -w "$install_prefix" ]]; then
+  make install
+else
+  sudo make install
+fi
