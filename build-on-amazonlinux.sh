@@ -32,3 +32,13 @@ if [[ -w "$install_prefix" ]]; then
 else
   sudo make install
 fi
+
+# ユーザ単位なら環境変数 LD_LIBRARY_PATH に追加して使えばよいが、
+# システム全体で共有ライブラリのパスが通るようにする。
+echo "$install_prefix/lib" | sudo tee /etc/ld.so.conf.d/opencv.conf >/dev/null
+sudo ldconfig
+
+# pkg-configでコンパイルオプションが取得できるようpkgconfigへのパスを通す。
+echo 'export PKG_CONFIG_PATH="${PKG_CONFIG_PATH:+$PKG_CONFIG_PATH:}_PREFIX_/lib/pkgconfig"' |
+ruby -e 'STDIN.each{|s|puts s.gsub(ARGV[0],ARGV[1])}' _PREFIX_ "$install_prefix" |
+sudo tee /etc/profile.d/opencv.sh >/dev/null
